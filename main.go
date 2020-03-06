@@ -2,15 +2,37 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"io"
+	"io/ioutil"
+	"log"
+	"net/http"
 )
 
-func worker(id int, jobs <-chan string, results chan<- string) {
-	for job := range jobs {
-		fmt.Println("worker", id, "started  job", job)
-		time.Sleep(time.Second)
-		fmt.Println("worker", id, "finished job", job)
-		results <- job
+func worker(id int, urls <-chan string, results chan<- string) {
+	for url := range urls {
+		fmt.Println("worker", id, "started  url", url)
+		// don't worry about errors
+		response, e := http.Get(url)
+		if e != nil {
+			log.Fatal(e)
+		}
+		defer response.Body.Close()
+
+		//open a file for writing
+		myFile, err := ioutil.TempFile("/tmp", "mypattern")
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer myFile.Close()
+
+		// Use io.Copy to just dump the response body to the file. This supports huge files
+		_, err = io.Copy(myFile, response.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("Success!")
+		fmt.Println("worker", id, "finished url", urls)
+		results <- url
 	}
 }
 
@@ -20,7 +42,7 @@ func main() {
 	const numWorkers = 3
 	jobs := make(chan string, numJobs)
 	results := make(chan string, numJobs)
-	urls := [8]string{"test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8"}
+	urls := [5]string{"https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120"}
 
 	for w := 0; w < numWorkers; w++ {
 		go worker(w, jobs, results)
@@ -31,7 +53,7 @@ func main() {
 	}
 	close(jobs)
 
-	for a := 1; a <= numJobs; a++ {
+	for a := 0; a < numJobs; a++ {
 		<-results
 	}
 }
