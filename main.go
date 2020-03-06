@@ -27,7 +27,8 @@ func worker(id int, urls <-chan struct {
 		defer response.Body.Close()
 
 		//open a file for writing
-		myFile, err := ioutil.TempFile("/tmp/image", strconv.Itoa(url.int))
+		filename := fmt.Sprintf("%06d", url.int)
+		myFile, err := ioutil.TempFile("/tmp/image", filename)
 		if err != nil {
 			log.Fatal(err)
 		}
