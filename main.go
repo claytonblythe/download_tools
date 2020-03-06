@@ -6,20 +6,28 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
-func worker(id int, urls <-chan string, results chan<- string) {
+func worker(id int, urls <-chan struct {
+	int
+	string
+}, results chan struct {
+	int
+	string
+}) {
 	for url := range urls {
-		fmt.Println("worker", id, "started  url", url)
+		fmt.Println("worker", id, "started  url", url.string)
 		// don't worry about errors
-		response, e := http.Get(url)
+		response, e := http.Get(url.string)
 		if e != nil {
 			log.Fatal(e)
 		}
 		defer response.Body.Close()
 
 		//open a file for writing
-		myFile, err := ioutil.TempFile("/tmp", "mypattern")
+		myFile, err := ioutil.TempFile("/tmp/image", strconv.Itoa(url.int))
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -31,25 +39,41 @@ func worker(id int, urls <-chan string, results chan<- string) {
 			log.Fatal(err)
 		}
 		fmt.Println("Success!")
-		fmt.Println("worker", id, "finished url", urls)
-		results <- url
+		fmt.Println("worker", id, "finished url", url.string)
+		results <- struct {
+			int
+			string
+		}{url.int, url.string}
 	}
 }
 
 func main() {
 
-	const numJobs = 5
-	const numWorkers = 3
-	jobs := make(chan string, numJobs)
-	results := make(chan string, numJobs)
-	urls := [5]string{"https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=1&res=120"}
+	const numJobs = 18
+	const numWorkers = 18
+	jobs := make(chan struct {
+		int
+		string
+	}, numJobs)
+	results := make(chan struct {
+		int
+		string
+	}, numJobs)
 
 	for w := 0; w < numWorkers; w++ {
 		go worker(w, jobs, results)
 	}
 
-	for _, url := range urls {
-		jobs <- url
+	for n := 1; n < 19; n++ {
+		page := strconv.Itoa(n)
+		var str strings.Builder
+		str.WriteString("https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=")
+		str.WriteString(page)
+		str.WriteString("&res=120")
+		jobs <- struct {
+			int
+			string
+		}{n, str.String()}
 	}
 	close(jobs)
 
