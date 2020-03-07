@@ -42,7 +42,7 @@ func worker(worker_id int, jobs <-chan struct {
 		results <- struct {
 			int
 			string
-		}{job.int, filename}
+		}{job.int, myFile.Name()}
 	}
 }
 
