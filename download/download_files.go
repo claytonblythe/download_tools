@@ -6,13 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 )
-
-func timeTrack(start time.Time, name string) {
-	elapsed := time.Since(start)
-	log.Printf("%s took %s", name, elapsed)
-}
 
 func worker(worker_id int, jobs <-chan struct {
 	int
@@ -54,7 +48,6 @@ func worker(worker_id int, jobs <-chan struct {
 }
 
 func Download_urls(urls []string, num_workers int) []string {
-	defer timeTrack(time.Now(), "Download_urls")
 
 	num_jobs := len(urls)
 
