@@ -4,25 +4,55 @@ import (
 	"testing"
 )
 
-/* func helperLoadBytes(t *testing.T, name string) []byte {
-	path := filepath.Join("testdata", name) // relative path
-	bytes, err := ioutil.ReadFile(path)
-	if err != nil {
-		t.Fatal(err)
-	}
-	return bytes
-} */
-
 func TestDownloadFiles(t *testing.T) {
-	urls := []string{"http://www.deepython.com", "http://www.deepython.com"}
-
+	urls := helperLoadUrls("urls.txt")
 	_ = Download_urls(urls, 2)
 }
 
-func BenchmarkDownloadFiles(b *testing.B) {
-	urls := []string{"http://www.deepython.com", "http://www.deepython.com"}
+func BenchmarkDownloadFilesOneWorker(b *testing.B) {
+	urls := helperLoadUrls("urls.txt")
 
 	for i := 0; i < b.N; i++ {
-		_ = Download_urls(urls, 2)
+		_ = Download_urls(urls, 1)
+	}
+}
+
+func BenchmarkDownloadFilesTenWorker(b *testing.B) {
+	urls := helperLoadUrls("urls.txt")
+
+	for i := 0; i < b.N; i++ {
+		_ = Download_urls(urls, 10)
+	}
+}
+
+func BenchmarkDownloadFilesThirtyWorker(b *testing.B) {
+	urls := helperLoadUrls("urls.txt")
+
+	for i := 0; i < b.N; i++ {
+		_ = Download_urls(urls, 30)
+	}
+}
+
+func BenchmarkDownloadFilesSixtyWorker(b *testing.B) {
+	urls := helperLoadUrls("urls.txt")
+
+	for i := 0; i < b.N; i++ {
+		_ = Download_urls(urls, 60)
+	}
+}
+
+func BenchmarkDownloadFilesHundredWorker(b *testing.B) {
+	urls := helperLoadUrls("urls.txt")
+
+	for i := 0; i < b.N; i++ {
+		_ = Download_urls(urls, 100)
+	}
+}
+
+func BenchmarkDownloadFilesTwoHundredWorker(b *testing.B) {
+	urls := helperLoadUrls("urls.txt")
+
+	for i := 0; i < b.N; i++ {
+		_ = Download_urls(urls, 200)
 	}
 }
