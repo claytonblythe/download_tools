@@ -6,28 +6,26 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
 )
 
-func worker(id int, urls <-chan struct {
+func worker(id int, jobs <-chan struct {
 	int
 	string
 }, results chan struct {
 	int
 	string
 }) {
-	for url := range urls {
-		fmt.Println("worker", id, "started  url", url.string)
+	for job := range jobs {
+		fmt.Println("worker", id, "started  url", job.string)
 		// don't worry about errors
-		response, e := http.Get(url.string)
+		response, e := http.Get(job.string)
 		if e != nil {
 			log.Fatal(e)
 		}
 		defer response.Body.Close()
 
 		//open a file for writing
-		filename := fmt.Sprintf("%06d", url.int)
+		filename := fmt.Sprintf("%06d", job.int)
 		myFile, err := ioutil.TempFile("/tmp/image", filename)
 		if err != nil {
 			log.Fatal(err)
@@ -40,45 +38,41 @@ func worker(id int, urls <-chan struct {
 			log.Fatal(err)
 		}
 		fmt.Println("Success!")
-		fmt.Println("worker", id, "finished url", url.string)
+		fmt.Println("worker", id, "finished url", job.string)
 		results <- struct {
 			int
 			string
-		}{url.int, url.string}
+		}{job.int, filename}
 	}
 }
 
 func main() {
-
-	const numJobs = 18
-	const numWorkers = 18
+	urls := []string{"https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=14&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=14&res=120"}
+	const num_jobs = 2
+	const num_workers = 2
 	jobs := make(chan struct {
 		int
 		string
-	}, numJobs)
+	}, num_jobs)
 	results := make(chan struct {
 		int
 		string
-	}, numJobs)
+	}, num_jobs)
 
-	for w := 0; w < numWorkers; w++ {
+	for w := 0; w < num_workers; w++ {
 		go worker(w, jobs, results)
 	}
 
-	for n := 1; n < 19; n++ {
-		page := strconv.Itoa(n)
-		var str strings.Builder
-		str.WriteString("https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=")
-		str.WriteString(page)
-		str.WriteString("&res=120")
-		jobs <- struct {
+	for page_index, url := range urls {
+		job := struct {
 			int
 			string
-		}{n, str.String()}
+		}{page_index, url}
+		jobs <- job
 	}
 	close(jobs)
 
-	for a := 0; a < numJobs; a++ {
+	for a := 0; a < num_jobs; a++ {
 		<-results
 	}
 }
