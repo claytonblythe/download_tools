@@ -46,8 +46,7 @@ func worker(worker_id int, jobs <-chan struct {
 	}
 }
 
-func main() {
-	urls := []string{"https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=14&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=14&res=120"}
+func download_urls(urls []string) []string {
 	const num_jobs = 2
 	const num_workers = 2
 	jobs := make(chan struct {
@@ -72,7 +71,16 @@ func main() {
 	}
 	close(jobs)
 
+	filepaths := []string{}
 	for a := 0; a < num_jobs; a++ {
-		<-results
+		result := <-results
+		filepaths = append(filepaths, result.string)
 	}
+	return filepaths
+}
+
+func main() {
+	urls := []string{"https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=14&res=120", "https://digital.olivesoftware.com/Olive/ODN/FTUS/get/image.ashx?kind=page&href=FIT%2F2020%2F03%2F05&page=14&res=120"}
+	result := download_urls(urls)
+	fmt.Println(result)
 }
