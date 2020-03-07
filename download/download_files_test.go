@@ -1,6 +1,7 @@
 package download
 
 import (
+	"strconv"
 	"testing"
 )
 
@@ -9,50 +10,24 @@ func TestDownloadFiles(t *testing.T) {
 	_ = Download_urls(urls, 2)
 }
 
-func BenchmarkDownloadFilesOneWorker(b *testing.B) {
+func BenchmarkDownloadFilesWorkers(b *testing.B) {
 	urls := helperLoadUrls("urls.txt")
-
-	for i := 0; i < b.N; i++ {
-		_ = Download_urls(urls, 1)
+	for n := 10; n <= 90; n += 10 {
+		b.Run(strconv.Itoa(n), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				_ = Download_urls(urls, n)
+			}
+		})
 	}
 }
 
-func BenchmarkDownloadFilesTenWorker(b *testing.B) {
-	urls := helperLoadUrls("urls.txt")
-
-	for i := 0; i < b.N; i++ {
-		_ = Download_urls(urls, 10)
-	}
-}
-
-func BenchmarkDownloadFilesThirtyWorker(b *testing.B) {
-	urls := helperLoadUrls("urls.txt")
-
-	for i := 0; i < b.N; i++ {
-		_ = Download_urls(urls, 30)
-	}
-}
-
-func BenchmarkDownloadFilesSixtyWorker(b *testing.B) {
-	urls := helperLoadUrls("urls.txt")
-
-	for i := 0; i < b.N; i++ {
-		_ = Download_urls(urls, 60)
-	}
-}
-
-func BenchmarkDownloadFilesHundredWorker(b *testing.B) {
-	urls := helperLoadUrls("urls.txt")
-
-	for i := 0; i < b.N; i++ {
-		_ = Download_urls(urls, 100)
-	}
-}
-
-func BenchmarkDownloadFilesTwoHundredWorker(b *testing.B) {
-	urls := helperLoadUrls("urls.txt")
-
-	for i := 0; i < b.N; i++ {
-		_ = Download_urls(urls, 200)
+func BenchmarkDownloadFilesWorkersImages(b *testing.B) {
+	urls := helperLoadUrls("image_urls.txt")
+	for n := 40; n <= 90; n += 10 {
+		b.Run(strconv.Itoa(n), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				_ = Download_urls(urls, n)
+			}
+		})
 	}
 }
