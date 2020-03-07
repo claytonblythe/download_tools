@@ -1,4 +1,7 @@
+github.com/claytonblythe/download_tools v0.0.0-20200307190617-29787fb6160c h1:0uSzYVDZZYuZf+yS8fDapDE7IdYI8hPgVceuBZK+2vk=
 github.com/tink-ab/tempfile v0.0.0-20180226111222-33beb0518f1a h1:Qhm/9UKGO1+AjEKIsq8G72uCq4SrYxSxS5wiD0F3IC4=
 github.com/tink-ab/tempfile v0.0.0-20180226111222-33beb0518f1a/go.mod h1:Wt5qSdcHgX6XkqZKAZTxnN+93jnqtx0jEgTQakpZ1CE=
+gitlab.com/claytonblythe/concurrent_file_downloader v0.0.0-20200307032907-795f87d52589 h1:oJg9gZsCzUlqTwOVY4EhQ9dFhHb1hJ8HWk3ia4g5gtQ=
+gitlab.com/claytonblythe/concurrent_file_downloader v0.0.0-20200307032907-795f87d52589/go.mod h1:mgqHNkOuCmt3SQj9lDVQYXJOdLEJI6C1JYZDIwWfGC4=
 gitlab.com/claytonblythe/go_hello_world v0.0.0-20200306042735-c4b25f9ecc2e h1:epY9hSQSzVq/E9Ae7KjOmfVzmomSmeslwN/fPdBnhTQ=
 gitlab.com/claytonblythe/go_hello_world v0.0.0-20200306042735-c4b25f9ecc2e/go.mod h1:2p8ZdZdlhDR5oViNLjYOieghx230CMa2HdwqQB+DOP8=
