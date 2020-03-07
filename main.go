@@ -47,7 +47,7 @@ func worker(worker_id int, jobs <-chan struct {
 }
 
 func download_urls(urls []string) []string {
-	const num_jobs = 2
+	num_jobs := len(urls)
 	const num_workers = 2
 	jobs := make(chan struct {
 		int
