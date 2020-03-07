@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func worker(id int, jobs <-chan struct {
+func worker(worker_id int, jobs <-chan struct {
 	int
 	string
 }, results chan struct {
@@ -16,7 +16,7 @@ func worker(id int, jobs <-chan struct {
 	string
 }) {
 	for job := range jobs {
-		fmt.Println("worker", id, "started  url", job.string)
+		fmt.Println("worker", worker_id, "started  url", job.string)
 		// don't worry about errors
 		response, e := http.Get(job.string)
 		if e != nil {
@@ -38,7 +38,7 @@ func worker(id int, jobs <-chan struct {
 			log.Fatal(err)
 		}
 		fmt.Println("Success!")
-		fmt.Println("worker", id, "finished url", job.string)
+		fmt.Println("worker", worker_id, "finished url", job.string)
 		results <- struct {
 			int
 			string
@@ -59,8 +59,8 @@ func main() {
 		string
 	}, num_jobs)
 
-	for w := 0; w < num_workers; w++ {
-		go worker(w, jobs, results)
+	for worker_id := 0; worker_id < num_workers; worker_id++ {
+		go worker(worker_id, jobs, results)
 	}
 
 	for page_index, url := range urls {
