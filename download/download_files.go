@@ -23,7 +23,6 @@ func worker(worker_id int, jobs <-chan struct {
 		if e != nil {
 			log.Fatal(e)
 		}
-		defer response.Body.Close()
 
 		//open a file for writing
 		filename := fmt.Sprintf("%06d", job.int)
@@ -33,9 +32,29 @@ func worker(worker_id int, jobs <-chan struct {
 		}
 
 		// Use io.Copy to just dump the response body to the file. This supports huge files
-		_, err = io.Copy(myFile, response.Body)
-		myFile.Close()
+		_, copyErr := io.Copy(myFile, response.Body)
+		if copyErr != nil {
+			closeErr := myFile.Close()
+			if closeErr != nil {
+				log.Fatal(closeErr)
+			}
+			closeErr2 := response.Body.Close()
+			if closeErr2 != nil {
+				log.Fatal(closeErr2)
+			}
+			log.Fatal(copyErr)
+		}
 
+		err = myFile.Close()
+		if err != nil {
+			err2 := response.Body.Close()
+			if err2 != nil {
+				log.Fatal(err2)
+			}
+			log.Fatal(err)
+		}
+
+		err = response.Body.Close()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -46,6 +65,7 @@ func worker(worker_id int, jobs <-chan struct {
 			string
 		}{job.int, job.string}
 	}
+
 }
 
 func Download_urls(urls []string, num_workers int) []string {

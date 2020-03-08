@@ -7,7 +7,7 @@ import (
 
 func TestDownloadFiles(t *testing.T) {
 	urls := helperLoadUrls("urls.txt")
-	_ = Download_urls(urls, 30)
+	_ = Download_urls(urls, 25)
 }
 
 func BenchmarkDownloadFilesWorkers(b *testing.B) {
