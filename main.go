@@ -18,5 +18,5 @@ func main() {
 		final_urls = append(final_urls, urls...)
 	}
 
-	_ = download.Download_urls(final_urls, 1)
+	_ = download.Download_urls(final_urls, 30)
 }
