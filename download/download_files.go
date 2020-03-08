@@ -17,8 +17,6 @@ func worker(worker_id int, jobs <-chan struct {
 }) {
 
 	for job := range jobs {
-		// fmt.Println("worker", worker_id, "started  url", job.string)
-		// don't worry about errors
 		response, e := http.Get(job.string)
 		if e != nil {
 			log.Fatal(e)
@@ -63,7 +61,7 @@ func worker(worker_id int, jobs <-chan struct {
 		results <- struct {
 			int
 			string
-		}{job.int, job.string}
+		}{job.int, myFile.Name()}
 	}
 
 }
