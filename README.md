@@ -6,10 +6,10 @@ It seems here that I/O is still very much the bottle neck, trying to write the r
 
 
 
-
 ### Benchmarks with Slow Url (High RTT) and no File I/O
 
-BenchmarkDownloadFilesWorkersSlowUrls/1-12          	       1	249642960054 ns/op	19711224 B/op	  166919 allocs/op
+| BenchmarkDownloadFilesWorkersSlowUrls/1-12          |	       1	| 249642960054 ns/op| 	19711224 B/op	|  166919 allocs/op|
+
 BenchmarkDownloadFilesWorkersSlowUrls/31-12 	               1	8087429436 ns/op	19658664 B/op	  163985 allocs/op
 BenchmarkDownloadFilesWorkersSlowUrls/61-12 	               1	4193474715 ns/op	19532456 B/op	  161037 allocs/op
 BenchmarkDownloadFilesWorkersSlowUrls/91-12 	               1	2886746090 ns/op	19436224 B/op	  158409 allocs/op
