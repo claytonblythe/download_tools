@@ -12,7 +12,7 @@ func TestDownloadFiles(t *testing.T) {
 
 func BenchmarkDownloadFilesWorkers(b *testing.B) {
 	urls := helperLoadUrls("urls.txt")
-	for n := 10; n <= 300; n += 30 {
+	for n := 10; n <= 250; n += 30 {
 		b.Run(strconv.Itoa(n), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				_ = Download_urls(urls, n)
@@ -23,7 +23,7 @@ func BenchmarkDownloadFilesWorkers(b *testing.B) {
 
 func BenchmarkDownloadFilesWorkersImages(b *testing.B) {
 	urls := helperLoadUrls("image_urls.txt")
-	for n := 1; n < 302; n += 30 {
+	for n := 1; n < 200; n += 30 {
 		b.Run(strconv.Itoa(n), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				_ = Download_urls(urls, n)

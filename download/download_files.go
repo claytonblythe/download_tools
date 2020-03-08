@@ -31,10 +31,11 @@ func worker(worker_id int, jobs <-chan struct {
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer myFile.Close()
 
 		// Use io.Copy to just dump the response body to the file. This supports huge files
 		_, err = io.Copy(myFile, response.Body)
+		myFile.Close()
+
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -43,7 +44,7 @@ func worker(worker_id int, jobs <-chan struct {
 		results <- struct {
 			int
 			string
-		}{job.int, "placeholder"}
+		}{job.int, job.string}
 	}
 }
 

@@ -1,6 +1,8 @@
 package main
 
 import (
+	_ "net/http/pprof"
+
 	"github.com/claytonblythe/download_tools/download"
 )
 
